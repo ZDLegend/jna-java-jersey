@@ -34,7 +34,7 @@ public class UserResource {
         JSONObject _data = data.getJSONObject("UserInfo");
         boolean bRole = data.getBoolean("Role");
 
-        JSONObject object = CommonService.addRes(new UserDao(), _data, headers, ComStructure.USER_INFO.class);
+        JSONObject object = CommonService.addRes(new UserDao(), _data, headers, new ComStructure.USER_INFO());
         if (object.getInt("errcode") != 0 || !bRole) {
             return object;
         }
@@ -44,7 +44,7 @@ public class UserResource {
 
     @PUT
     public JSONObject update(JSONObject data, @Context HttpHeaders headers) {
-        return CommonService.modify(new UserDao(), data, headers, SDKStructure.USER_MODIFY_PASSWORD_S.class);
+        return CommonService.modify(new UserDao(), data, headers, new SDKStructure.USER_MODIFY_PASSWORD_S());
     }
 
     @DELETE
@@ -65,6 +65,6 @@ public class UserResource {
         int ret = rb.init(data.getJSONArray("RoleCode"), data.getInt("RoleCount"));
         if (ret != ERR_COMMON_SUCCEED) return ResponseInfoMng.errorRsp(ret, "设置用户权限啊失败");
 
-        return CommonService.addRes(rb, data, headers, ComStructure.ROLE_INFO.class);
+        return CommonService.addRes(rb, data, headers, new ComStructure.ROLE_INFO());
     }
 }

@@ -3,7 +3,6 @@ package com.zdl.code.server;
 import com.zdl.code.bean.SDKUserBean;
 import com.zdl.code.jna.SDKStructure;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

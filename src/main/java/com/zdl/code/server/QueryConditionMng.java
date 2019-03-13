@@ -1,10 +1,11 @@
 package com.zdl.code.server;
 
 import com.sun.jna.Structure;
-import com.zdl.code.exception.StructException;
-import com.zdl.code.jna.*;
+import com.zdl.code.jna.SDKConst;
+import com.zdl.code.jna.SDKErrorCode;
+import com.zdl.code.jna.SDKStructure;
+import com.zdl.code.jna.SPStructure;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 

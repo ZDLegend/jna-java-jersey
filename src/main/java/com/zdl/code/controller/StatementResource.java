@@ -23,7 +23,7 @@ public class StatementResource {
 
     @POST
     public JSONObject add(JSONObject data, @Context HttpHeaders headers) {
-        return CommonService.addRes(new StatementDao(), data, headers, ComStructure.STATEMENT_INFO.class);
+        return CommonService.addRes(new StatementDao(), data, headers, new ComStructure.STATEMENT_INFO());
     }
 
     @DELETE
@@ -36,6 +36,6 @@ public class StatementResource {
     public JSONObject query(@QueryParam("condition") String cond,
                             @Context HttpHeaders headers) {
         return CommonService.query(new StatementDao(), cond,
-                headers, SDKStructure.STATEMENT_DISPOSITION_INFO_S.class, SDKConst.QUERY_CON_TYPE.COM_CON);
+                headers, new SDKStructure.STATEMENT_DISPOSITION_INFO_S(), SDKConst.QUERY_CON_TYPE.COM_CON);
     }
 }

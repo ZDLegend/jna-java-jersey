@@ -42,7 +42,7 @@ public interface SPStructure {
      * @brief 查询条件项
      * @attention
      */
-     class SPS_QUERY_CONDITION_ITEM_S extends Structure {
+    class SPS_QUERY_CONDITION_ITEM_S extends Structure {
         /**
          * 查询条件列名
          */
