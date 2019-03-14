@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
 
     private boolean OpenAlarm = false;
-    private ConcurrentHashMap<String, String> datas = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
     private static CallBackProcPF instance = new CallBackProcPF();
 
     private CallBackProcPF() {
@@ -36,7 +36,7 @@ public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
 
     public void openAlarm(String name, String data) {
         if (!OpenAlarm) OpenAlarm = true;
-        datas.put(name, data);
+        this.data.put(name, data);
     }
 
     public void closeAlarm() {
@@ -44,8 +44,8 @@ public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
     }
 
     public void closeAlarm(String name) {
-        datas.remove(name);
-        if (datas.size() == 0) OpenAlarm = false;
+        data.remove(name);
+        if (data.size() == 0) OpenAlarm = false;
     }
 
     @Override
@@ -60,6 +60,6 @@ public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
                 .Struct2Json()
                 .toString();
 
-        datas.forEachValue(Long.MAX_VALUE, (s1) -> HttpUtils.sendAlarm(s1, strData));
+        data.forEachValue(Long.MAX_VALUE, (s1) -> HttpUtils.sendAlarm(s1, strData));
     }
 }

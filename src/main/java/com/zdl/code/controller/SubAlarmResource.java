@@ -6,10 +6,16 @@ import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.data.util.Pair;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static com.zdl.code.jna.SDKConst.*;
 import static com.zdl.code.jna.SDKErrorCode.ERR_JSON_LACK_FIELD;
@@ -28,6 +34,14 @@ public class SubAlarmResource {
     private static CallBackProcPF ins = CallBackProcPF.getInstance();
     private static CallAlarm fins = CallAlarm.getInstance();
 
+    private static final Map<Integer, Pair<BiConsumer<String, String>, Consumer<String>>> callMathMap = new HashMap<>();
+
+    static {
+        callMathMap.put(COM_ALARM, Pair.of((user, data) -> ins.openAlarm(user, data), user -> ins.closeAlarm(user)));
+        callMathMap.put(FACE_GUARD, Pair.of((user, data) -> fins.openFaceAlarm(user, data), user -> fins.closeFaceAlarm(user)));
+        callMathMap.put(FACE_SNAP, Pair.of((user, data) -> fins.openNapAlarm(user, data), user -> fins.closeNapAlarm(user)));
+    }
+
     @POST
     @Path("/open")
     @Produces("application/json")
@@ -40,25 +54,15 @@ public class SubAlarmResource {
             /* 订阅指定的告警，type不填则默认订阅所有告警 */
             if (data.containsKey("type")) {
                 int type = data.getInt("type");
-                switch (type) {
-                    case COM_ALARM:
-                        ins.openAlarm(username, data.getString("data"));
-                        break;
-                    case FACE_GUARD:
-                        fins.openFaceAlarm(username, data.getString("data"));
-                        break;
-                    case FACE_SNAP:
-                        fins.openNapAlarm(username, data.getString("data"));
-                        break;
-                    default:
-                        logger.error("订阅告警类型错误");
-                        return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
+                if(callMathMap.containsKey(type)){
+                    callMathMap.get(type).getFirst().accept(username, data.getString("data"));
+                } else {
+                    logger.error("订阅告警类型错误:" + type);
+                    return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
                 }
             } else {
                 logger.info("JSON中没有type，默认订阅所有告警");
-                ins.openAlarm(username, data.getString("data"));
-                fins.openFaceAlarm(username, data.getString("data"));
-                fins.openNapAlarm(username, data.getString("data"));
+                callMathMap.forEach((i, bi) -> bi.getFirst().accept(username, data.getString("data")));
             }
 
             return ResponseInfoMng.correctRsp();
@@ -75,13 +79,7 @@ public class SubAlarmResource {
     @Path("/close")
     @Produces("application/json")
     public JSONObject closeAll(@Context HttpHeaders headers) {
-
-        String username = SDKHandler.getUsername(headers);
-
-        if (ins.isOpenAlarm()) ins.closeAlarm(username);
-        if (fins.isOpenFaceAlarm()) fins.closeFaceAlarm(username);
-        if (fins.isOpenNapAlarm()) fins.closeNapAlarm(username);
-
+        callMathMap.forEach((i, bi) -> bi.getSecond().accept(SDKHandler.getUsername(headers)));
         return ResponseInfoMng.correctRsp();
     }
 
@@ -92,22 +90,11 @@ public class SubAlarmResource {
 
         String username = SDKHandler.getUsername(headers);
 
-        switch (type) {
-            case COM_ALARM:
-                if (!ins.isOpenAlarm()) return ResponseInfoMng.errorRsp(1, "未订阅任何通用告警");
-                ins.closeAlarm(username);
-                break;
-            case FACE_GUARD:
-                if (!fins.isOpenFaceAlarm()) return ResponseInfoMng.errorRsp(1, "未订阅任何人脸告警");
-                fins.closeFaceAlarm(username);
-                break;
-            case FACE_SNAP:
-                if (!fins.isOpenNapAlarm()) return ResponseInfoMng.errorRsp(1, "未订阅任何人脸告警");
-                fins.closeNapAlarm(username);
-                break;
-            default:
-                logger.error("订阅告警类型错误");
-                return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
+        if(callMathMap.containsKey(type)){
+            callMathMap.get(type).getSecond().accept(username);
+        } else {
+            logger.error("订阅告警类型错误:" + type);
+            return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
         }
 
         return ResponseInfoMng.correctRsp();

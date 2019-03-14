@@ -1,5 +1,7 @@
 package com.zdl.code.api;
 
+import com.sun.jna.Structure;
+
 import javax.ws.rs.core.HttpHeaders;
 
 /**
@@ -7,7 +9,7 @@ import javax.ws.rs.core.HttpHeaders;
  * <p>
  * Created by ZDLegend on 2019/3/13.
  */
-public interface CommonAPI<T, OUT> {
+public interface CommonAPI<T extends Structure, OUT extends Structure> {
 
     /**
      * 执行某个C++ API
