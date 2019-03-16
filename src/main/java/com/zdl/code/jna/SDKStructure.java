@@ -368,7 +368,7 @@ public interface SDKStructure {
         }
     }
 
-    public static class STATEMENT_DISPOSITION_INFO_S extends Structure {
+    class STATEMENT_DISPOSITION_INFO_S extends Structure {
         public byte[] szDispositionCode = new byte[ZDL_CODE_LEN];
         public int ulInterType;
         public int bFuzzyMatch;
@@ -414,6 +414,43 @@ public interface SDKStructure {
                     "szEndTime", "ulStatus", "ulExtStatus", "szCaseDesc", "szActionDesc",
                     "szSmsMobile", "szDomainCode", "ulDisposePlanStatus", "szReserve",
                     "stUndoInfo", "szAuditRemark", "szDispositionName");
+        }
+    }
+
+    /**
+     * @struct tagURLInfo
+     * @brief URL信息数据结构
+     */
+    class URL_INFO_S extends Structure {
+        public byte[] szURL = new byte[SDKConst.ZDL_IE_URL_LEN];
+        public byte[] szDecoderTag = new byte[SDKConst.ZDL_STRING_LEN_64];
+
+        public URL_INFO_S() {
+
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("szURL", "szDecoderTag");
+        }
+    }
+
+    /**
+     * @struct tagGetUrlInfo
+     * @brief 获取录像文件URL的请求结构
+     */
+    class GET_URL_INFO_S extends Structure {
+        public byte[] szCamCode = new byte[SDKConst.ZDL_RES_CODE_LEN];
+        public byte[] szFileName = new byte[SDKConst.ZDL_FILE_NAME_LEN];
+        public byte[] szClientIp = new byte[SDKConst.ZDL_IPADDR_LEN];
+
+        public GET_URL_INFO_S() {
+
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("szCamCode", "szFileName", "szClientIp");
         }
     }
 }

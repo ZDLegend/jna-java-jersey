@@ -184,5 +184,24 @@ public interface SDKFunction extends Library {
             SDKStructure.STATEMENT_DISPOSITION_INFO_S[] pstDispositionList
     );
 
+    /**
+     * 获取录像文件的URL信息 \n
+     *
+     * @param [IN]  pstUserLogIDInfo            用户登录ID信息标识
+     * @param [IN]  pstSDKGetUrlInfo            获取录像文件URL的请求
+     * @param [OUT] pstSDKURLInfo               URL信息
+     * @return 返回如下结果：
+     * - 成功：
+     * - #ERR_COMMON_SUCCEED
+     * - 失败：
+     * -     返回操作结果码，见错误码文件
+     */
+    int ZDL_GetRecordFileURL
+    (
+            SDKStructure.USER_LOGIN_ID_INFO_S pstUserLogIDInfo,
+            SDKStructure.GET_URL_INFO_S pstSDKGetUrlInfo,
+            SDKStructure.URL_INFO_S pstSDKURLInfo
+    );
+
 }
 

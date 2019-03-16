@@ -33,13 +33,13 @@ public final class CommonService {
         //to do nothing
     }
 
-    public static <R extends Structure, OUT extends Structure> JSONObject common(CommonAPI<R, OUT> sdkApi, JSONObject data, HttpHeaders headers, R info) {
+    public static <IN extends Structure, OUT extends Structure> JSONObject common(CommonAPI<IN, OUT> sdkApi, JSONObject data, HttpHeaders headers, IN info) {
         int ret = executeSdk(sdkApi::execute, data, headers, info);
         if (ERR_COMMON_SUCCEED != ret) {
             logger.error("修改失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
             return ResponseInfoMng.errorRsp(ret, "修改失败");
         }
-        return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(sdkApi.getOut(info)));
+        return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(sdkApi.getOut()));
     }
 
     /**
