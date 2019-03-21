@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -20,7 +21,7 @@ public class HttpUtils {
 
     public static void sendAlarm(String url, String data) {
 
-        java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+        var client = HttpClient.newHttpClient();
 
         var r = HttpRequest.newBuilder(URI.create(url))
                 .timeout(Duration.ofMillis(CONNECTION_TIME_OUT))
@@ -33,6 +34,7 @@ public class HttpUtils {
                     if (throwable != null) {
                         logger.error(throwable.getMessage(), throwable);
                     }
+
                     var code = request.statusCode();
                     if (code == HttpStatus.OK_200.getStatusCode()) {
                         logger.info("http send success");
