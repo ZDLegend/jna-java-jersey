@@ -33,6 +33,7 @@ public class HttpUtils {
                 .whenComplete((request, throwable) -> {
                     if (throwable != null) {
                         logger.error(throwable.getMessage(), throwable);
+                        return;
                     }
 
                     var code = request.statusCode();
