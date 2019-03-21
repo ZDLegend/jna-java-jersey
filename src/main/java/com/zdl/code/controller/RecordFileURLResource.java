@@ -1,9 +1,9 @@
 package com.zdl.code.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.dao.RecordFileURLDao;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.service.CommonService;
-import net.sf.json.JSONObject;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;

@@ -5,8 +5,8 @@ import com.zdl.code.jna.SDKConst;
 import com.zdl.code.jna.SDKErrorCode;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.jna.SPStructure;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 
 /**
@@ -47,7 +47,7 @@ public class QueryConditionMng {
             pstQueryPageInfo.ulPageRowNum = 10;
             return SDKErrorCode.ERR_COMMON_SUCCEED;
         }
-        JSONObject rep = JSONObject.fromObject(cond);
+        JSONObject rep = JSONObject.parseObject(cond);
 
         JSONArray condition;
 
@@ -55,7 +55,7 @@ public class QueryConditionMng {
             return SDKErrorCode.ERR_JSON_LACK_FIELD;
         }
 
-        int PageRowNum = rep.getInt("PageRowNum");
+        int PageRowNum = rep.getInteger("PageRowNum");
         if (PageRowNum < 0 || PageRowNum > SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM) {
             logger.error("分页查询中每页的最大条目数不能超过" + SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
             return SDKErrorCode.ERR_QUERY_MAX_NUM;
@@ -67,7 +67,7 @@ public class QueryConditionMng {
                 return SDKErrorCode.ERR_INVALID_INPUT;
             }
 
-            int ItemNum = rep.getInt("ItemNum");
+            int ItemNum = rep.getInteger("ItemNum");
             if (ItemNum < 0 || ItemNum > SDKConst.ZDL_QUERY_ITEM_MAX_NUM) {
                 logger.error("查询条件最大条目数不能超过" + SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
                 return SDKErrorCode.ERR_QUERY_MAX_NUM;
@@ -91,8 +91,8 @@ public class QueryConditionMng {
                             continue;
                         }
 
-                        createSDKQueryItem(con.getInt("QueryType"),
-                                con.getInt("LogicFlag"),
+                        createSDKQueryItem(con.getInteger("QueryType"),
+                                con.getInteger("LogicFlag"),
                                 con.getString("QueryData"),
                                 pstQueryCondition.astQueryConditionList[i]);
                     }
@@ -111,7 +111,7 @@ public class QueryConditionMng {
                         }
 
                         createSPSQueryItem(con.getString("QueryColumn"),
-                                con.getInt("LogicFlag"),
+                                con.getInteger("LogicFlag"),
                                 con.getString("QueryData"),
                                 pstSPSQueryCondition.astQueryConditionList[i]);
                     }
@@ -121,8 +121,8 @@ public class QueryConditionMng {
             }
         }
 
-        pstQueryPageInfo.bQueryCount = rep.getInt("QueryCount");
-        pstQueryPageInfo.ulPageFirstRowNumber = rep.getInt("PageFirstRowNumber");
+        pstQueryPageInfo.bQueryCount = rep.getInteger("QueryCount");
+        pstQueryPageInfo.ulPageFirstRowNumber = rep.getInteger("PageFirstRowNumber");
         pstQueryPageInfo.ulPageRowNum = PageRowNum;
 
         return SDKErrorCode.ERR_COMMON_SUCCEED;

@@ -3,7 +3,7 @@ package com.zdl.code.server;
 import com.zdl.code.call.CallAlarm;
 import com.zdl.code.call.CallBackProcPF;
 import com.zdl.code.jna.*;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;

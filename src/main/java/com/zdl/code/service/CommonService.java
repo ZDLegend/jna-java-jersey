@@ -1,5 +1,7 @@
 package com.zdl.code.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.jna.Structure;
 import com.zdl.code.api.*;
 import com.zdl.code.exception.StructException;
@@ -9,8 +11,7 @@ import com.zdl.code.jna.SPStructure;
 import com.zdl.code.server.QueryConditionMng;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.StructUtils;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;

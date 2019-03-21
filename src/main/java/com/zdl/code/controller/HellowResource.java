@@ -1,7 +1,7 @@
 package com.zdl.code.controller;
 
 import com.zdl.code.server.ResponseInfoMng;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.server.mvc.Viewable;
 

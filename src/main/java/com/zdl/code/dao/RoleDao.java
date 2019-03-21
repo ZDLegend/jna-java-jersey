@@ -5,7 +5,7 @@ import com.zdl.code.jna.ComStructure;
 import com.zdl.code.jna.SDKFunction;
 import com.zdl.code.server.SDKHandler;
 import com.zdl.code.server.StringUtils;
-import net.sf.json.JSONArray;
+import com.alibaba.fastjson.JSONArray;
 
 import javax.ws.rs.core.HttpHeaders;
 

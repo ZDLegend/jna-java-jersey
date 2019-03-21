@@ -2,7 +2,7 @@ package com.zdl.code.controller;
 
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.UserManager;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;

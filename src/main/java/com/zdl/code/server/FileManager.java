@@ -1,6 +1,6 @@
 package com.zdl.code.server;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.eclipse.persistence.tools.file.FileUtil;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -105,6 +105,6 @@ public class FileManager {
             str = str.replace(f, "{");
         }
 
-        return JSONObject.fromObject(str);
+        return JSONObject.parseObject(str);
     }
 }

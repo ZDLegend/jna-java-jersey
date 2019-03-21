@@ -5,7 +5,7 @@ import com.zdl.code.jna.ComStructure;
 import com.zdl.code.jna.SDKConst;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.service.CommonService;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

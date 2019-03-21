@@ -1,10 +1,10 @@
 package com.zdl.code.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.call.CallAlarm;
 import com.zdl.code.call.CallBackProcPF;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.data.util.Pair;
 
@@ -52,7 +52,7 @@ public class SubAlarmResource {
 
             /* 订阅指定的告警，type不填则默认订阅所有告警 */
             if (data.containsKey("type")) {
-                int type = data.getInt("type");
+                int type = data.getInteger("type");
                 if (callMethodMap.containsKey(type)) {
                     callMethodMap.get(type).getFirst().accept(username, data.getString("data"));
                 } else {

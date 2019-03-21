@@ -7,7 +7,7 @@ import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
 import com.zdl.code.service.CommonService;
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -35,7 +35,7 @@ public class UserResource {
         boolean bRole = data.getBoolean("Role");
 
         JSONObject object = CommonService.addRes(new UserDao(), _data, headers, new ComStructure.USER_INFO());
-        if (object.getInt("errcode") != 0 || !bRole) {
+        if (object.getInteger("errcode") != 0 || !bRole) {
             return object;
         }
 
@@ -62,7 +62,7 @@ public class UserResource {
         }
 
         RoleDao rb = new RoleDao();
-        int ret = rb.init(data.getJSONArray("RoleCode"), data.getInt("RoleCount"));
+        int ret = rb.init(data.getJSONArray("RoleCode"), data.getInteger("RoleCount"));
         if (ret != ERR_COMMON_SUCCEED) return ResponseInfoMng.errorRsp(ret, "设置用户权限啊失败");
 
         return CommonService.addRes(rb, data, headers, new ComStructure.ROLE_INFO());

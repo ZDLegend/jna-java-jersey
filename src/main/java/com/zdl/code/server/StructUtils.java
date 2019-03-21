@@ -1,9 +1,9 @@
 package com.zdl.code.server;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.jna.Structure;
 import com.zdl.code.exception.StructException;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Array;
@@ -31,14 +31,13 @@ public class StructUtils {
      */
     public static Structure Json2Struct(JSONObject jsonObject, Structure structure) throws StructException {
 
-        Map<String, Object> map = jsonObject;
         //获取结构体字段
         Field[] fields = structure.getClass().getDeclaredFields();
         String strName = structure.getClass().getName();
 
         int e = 0;
         //遍历赋值
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
 
             int find = 0;
 
