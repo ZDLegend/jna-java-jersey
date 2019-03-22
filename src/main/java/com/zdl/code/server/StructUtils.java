@@ -115,8 +115,7 @@ public class StructUtils {
 
             try {
                 //打开修改权限
-                boolean access = field.isAccessible();
-                if (!access) field.setAccessible(true);
+                field.setAccessible(true);
 
                 //从obj中获取field变量
                 Object obj = field.get(structure);
