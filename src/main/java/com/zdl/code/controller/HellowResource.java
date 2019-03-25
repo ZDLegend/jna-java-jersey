@@ -3,7 +3,6 @@ package com.zdl.code.controller;
 import com.zdl.code.server.ResponseInfoMng;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
-import org.glassfish.jersey.server.mvc.Viewable;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -50,13 +49,5 @@ public class HellowResource {
     public JSONObject Delete(@Context HttpHeaders headers, JSONObject resq) {
         System.out.println("DELETE:" + resq);
         return resq;
-    }
-
-    @GET
-    @Path("/view")
-    @Produces(MediaType.TEXT_HTML)
-    public Viewable view() {
-
-        return new Viewable("/index", null);
     }
 }

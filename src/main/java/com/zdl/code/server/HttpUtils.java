@@ -1,8 +1,8 @@
 package com.zdl.code.server;
 
-import org.glassfish.grizzly.http.util.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -37,7 +37,7 @@ public class HttpUtils {
                     }
 
                     var code = request.statusCode();
-                    if (code == HttpStatus.OK_200.getStatusCode()) {
+                    if (code == HttpStatus.OK.value()) {
                         logger.info("http send success");
                     } else {
                         logger.error("http send fail, code:{}, body;{}", request.statusCode(), request.body());

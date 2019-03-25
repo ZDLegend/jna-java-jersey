@@ -1,49 +1,41 @@
 package com.zdl.code;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.sun.jna.Platform;
 import com.zdl.code.server.AuthorizationRequestFilter;
-import com.zdl.code.server.SDKHandler;
+import com.zdl.code.server.HttpUtils;
 import com.zdl.code.server.StringUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.glassfish.jersey.logging.LoggingFeature;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import javax.json.stream.JsonGenerator;
 import javax.ws.rs.ApplicationPath;
 
 /**
  * Created by ZDLegend on 2016/10/19.
  */
+@Component
 @ApplicationPath("/")
-public class MyApplication extends ResourceConfig {
+public class JerseyConfig extends ResourceConfig {
+
+    private static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
     static {
-        System.out.println("Yu Zhou Di Yi Shuai - ZDLegend App Start");
+        logger.debug("Yu Zhou Di Yi Shuai - ZDLegend App Start");
     }
 
-    public MyApplication() {
-
+    public JerseyConfig() {
         /* 注册资源 */
-        packages("com.zmh.code.controller");
+        packages("com.zdl.code.controller");
         register(LoggingFeature.class);
         register(AuthorizationRequestFilter.class);
-        register(MultiPartFeature.class);
-        register(JacksonJsonProvider.class);
-        register(JspMvcFeature.class);
-        property(JspMvcFeature.TEMPLATE_BASE_PATH, "/");
-        property(JsonGenerator.PRETTY_PRINTING, true);
 
         /* 初始化日志配置 */
         String res = (Platform.isWindows() ? "../log4j.properties" : "../log4j_linux.properties");
         String url = this.getClass().getResource(res).getPath();
         String path = StringUtils.spaceString(url);
         PropertyConfigurator.configure(path);
-
-        /* 初始化SDK */
-        SDKHandler handler = new SDKHandler();
-        handler.init();
     }
 }

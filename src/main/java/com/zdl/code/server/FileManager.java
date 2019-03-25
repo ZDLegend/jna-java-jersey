@@ -2,9 +2,6 @@ package com.zdl.code.server;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.tools.file.FileUtil;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -51,47 +48,6 @@ public class FileManager {
         return laststr;
     }
 
-    /**
-     * 上传图片
-     */
-    public static void uploadImage(FormDataMultiPart form) {
-
-        FormDataBodyPart part = form.getField("file");
-        String strfilename = part.getContentDisposition().getFileName();
-        String newFilename = form.getField("filename").getValue();
-        InputStream inputStream = part.getValueAs(InputStream.class);
-
-        File file = new File(ConfigFileMng.getImagePath());
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        try {
-            OutputStream outputStream = new FileOutputStream(new File(
-                    ConfigFileMng.getImagePath(),
-                    newFilename + strfilename.substring(strfilename.indexOf("."), strfilename.length())));
-
-            FileUtil.copy(inputStream, outputStream);
-
-            inputStream.close();
-            outputStream.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            logger.error("文件不存在", e);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            logger.error("图片文件处理失败", e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     /**
      * 把json格式存储的文件转化成json格式数据
