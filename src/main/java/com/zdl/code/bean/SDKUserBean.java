@@ -29,12 +29,12 @@ public class SDKUserBean {
     /**
      * 用户建立时间
      */
-    private Date buildtime = new Date();
+    private Date buildTime = new Date();
 
     /**
      * 用户更新时间
      */
-    private Date updateime = new Date();
+    private Date updateTime = new Date();
 
     /**
      * 用户对应的编码ID，用户调用restful接口的唯一标识符
@@ -44,12 +44,12 @@ public class SDKUserBean {
     /**
      * 用户信息结构体，包含了用户名，用户编码等
      */
-    private SDKStructure.USER_INFO_S UserInfo = new SDKStructure.USER_INFO_S();
+    private SDKStructure.USER_INFO_S userInfo = new SDKStructure.USER_INFO_S();
 
     /**
      * 用户登录信息结构体，调用每个C库接口的时候使用
      */
-    private SDKStructure.USER_LOGIN_ID_INFO_S UserLoginIDInfo = new SDKStructure.USER_LOGIN_ID_INFO_S();
+    private SDKStructure.USER_LOGIN_ID_INFO_S userLoginIDInfo = new SDKStructure.USER_LOGIN_ID_INFO_S();
 
     /**
      * 用户编码类型（token和code）
@@ -70,7 +70,7 @@ public class SDKUserBean {
      * 每使用一次该用户ID，刷新一次用户更新时间
      */
     public void updateTime() {
-        updateime = new Date();
+        updateTime = new Date();
     }
 
     /**
@@ -163,8 +163,8 @@ public class SDKUserBean {
 
     }
 
-    public Date getBuildtime() {
-        return buildtime;
+    public Date getBuildTime() {
+        return buildTime;
     }
 
     public String getUuid() {
@@ -190,27 +190,27 @@ public class SDKUserBean {
     }
 
     public SDKStructure.USER_INFO_S getUserInfo() {
-        return UserInfo;
+        return userInfo;
     }
 
     public void setUserInfo(SDKStructure.USER_INFO_S userInfo) {
 
-        this.UserInfo = userInfo;
+        this.userInfo = userInfo;
     }
 
     public SDKStructure.USER_LOGIN_ID_INFO_S getUserLoginIDInfo() {
-        return UserLoginIDInfo;
+        return userLoginIDInfo;
     }
 
     public void setUserLoginIDInfo() {
 
-        StringUtils.ArrayCopy(this.UserLoginIDInfo.szUserCode, UserInfo.szUserCode);
-        StringUtils.setSdkBytes(this.UserLoginIDInfo.szUserLoginCode, "IMOS_INSIDE_V5_INNER");
+        StringUtils.ArrayCopy(this.userLoginIDInfo.szUserCode, userInfo.szUserCode);
+        StringUtils.setSdkBytes(this.userLoginIDInfo.szUserLoginCode, "IMOS_INSIDE_V5_INNER");
     }
 
     public String toString() {
-        String usercode = StringUtils.bytesToString(this.UserLoginIDInfo.szUserCode);
-        return "usercode = " + usercode + ", buildtime = " + buildtime + ", updateime = "
-                + updateime + ", access_" + type + " = " + uuid;
+        String usercode = StringUtils.bytesToString(this.userLoginIDInfo.szUserCode);
+        return "usercode = " + usercode + ", buildTime = " + buildTime + ", updateTime = "
+                + updateTime + ", access_" + type + " = " + uuid;
     }
 }
