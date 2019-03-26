@@ -11,7 +11,6 @@ import com.zdl.code.jna.SPStructure;
 import com.zdl.code.server.QueryConditionMng;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.StructUtils;
-
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.core.HttpHeaders;

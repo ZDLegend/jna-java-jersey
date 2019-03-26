@@ -5,7 +5,6 @@ import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
 import com.zdl.code.server.UserManager;
-
 import org.apache.log4j.Logger;
 
 import javax.ws.rs.Consumes;

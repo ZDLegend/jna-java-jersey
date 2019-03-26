@@ -1,12 +1,12 @@
 package com.zdl.code.server;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sun.jna.Structure;
 import com.zdl.code.jna.SDKConst;
 import com.zdl.code.jna.SDKErrorCode;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.jna.SPStructure;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 
 /**

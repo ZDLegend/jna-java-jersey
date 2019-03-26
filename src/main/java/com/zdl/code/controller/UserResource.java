@@ -1,5 +1,6 @@
 package com.zdl.code.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.dao.RoleDao;
 import com.zdl.code.dao.UserDao;
 import com.zdl.code.jna.ComStructure;
@@ -7,7 +8,6 @@ import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
 import com.zdl.code.service.CommonService;
-import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

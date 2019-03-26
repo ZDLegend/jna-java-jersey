@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class SDKConfig {
     @PostConstruct
-    public void SDKInit(){
+    public void SDKInit() {
         SDKHandler handler = new SDKHandler();
         handler.init();
     }

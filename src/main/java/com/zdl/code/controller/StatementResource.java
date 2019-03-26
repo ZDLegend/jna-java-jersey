@@ -1,11 +1,11 @@
 package com.zdl.code.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.dao.StatementDao;
 import com.zdl.code.jna.ComStructure;
 import com.zdl.code.jna.SDKConst;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.service.CommonService;
-import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
