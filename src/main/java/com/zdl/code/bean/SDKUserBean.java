@@ -3,7 +3,8 @@ package com.zdl.code.bean;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.server.StringUtils;
 import com.zdl.code.server.UserManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Timer;
@@ -23,7 +24,7 @@ import java.util.TimerTask;
  */
 public class SDKUserBean {
 
-    private static Logger logger = Logger.getLogger(SDKUserBean.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SDKUserBean.class);
 
     /**
      * 用户建立时间

@@ -5,7 +5,8 @@ import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
 import com.zdl.code.server.UserManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -32,7 +33,7 @@ import static com.zdl.code.server.StringUtils.getBASE64;
 @Produces("application/json;charset=UTF-8")
 public class SDKLoginResource {
 
-    private static Logger logger = Logger.getLogger(SDKLoginResource.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SDKLoginResource.class);
 
     @POST
     public JSONObject UserLogin(JSONObject jsonObject) {
@@ -49,7 +50,7 @@ public class SDKLoginResource {
 
         /* 第二次调用登录接口 */
         else {
-            logger.info("第二次调用登陆接口入参" + jsonObject);
+            logger.info("第二次调用登陆接口入参{}", jsonObject);
 
             if (!jsonObject.containsKey("username") ||
                     !jsonObject.containsKey("access_code") ||
@@ -72,7 +73,7 @@ public class SDKLoginResource {
             SDKStructure.USER_INFO_PASSWORD_S pstPassword = new SDKStructure.USER_INFO_PASSWORD_S();
             int ret = SDKHandler.getPasswd(user, pstPassword);
             if (ERR_COMMON_SUCCEED != ret) {
-                logger.error("获取密码失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+                logger.error("获取密码失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
                 return ResponseInfoMng.errorRsp(ret, "获取密码失败");
             }
 

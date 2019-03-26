@@ -4,7 +4,7 @@
 
   <groupId>ADL</groupId>
   <artifactId>jna-java-jersey</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.0</version>
 
   <name>jna-java-jersey</name>
@@ -36,12 +36,6 @@
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
       <version>4.2.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons -->

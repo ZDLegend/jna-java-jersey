@@ -11,7 +11,8 @@ import com.zdl.code.jna.SPStructure;
 import com.zdl.code.server.QueryConditionMng;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.StructUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.util.function.BiFunction;
@@ -27,7 +28,7 @@ import static com.zdl.code.jna.SDKErrorCode.ERR_JSON_TO_STRUCT;
  */
 public final class CommonService {
 
-    private static Logger logger = Logger.getLogger(CommonService.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(CommonService.class);
 
     private CommonService() {
         //to do nothing
@@ -36,7 +37,7 @@ public final class CommonService {
     public static <IN extends Structure, OUT extends Structure> JSONObject common(CommonAPI<IN, OUT> sdkApi, JSONObject data, HttpHeaders headers, IN info) {
         int ret = executeSdk(sdkApi::execute, data, headers, info);
         if (ERR_COMMON_SUCCEED != ret) {
-            logger.error("修改失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+            logger.error("SDK返回失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "修改失败");
         }
         return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(sdkApi.getOut()));
@@ -59,7 +60,7 @@ public final class CommonService {
     private static <R extends Structure> JSONObject up(BiFunction<HttpHeaders, R, Integer> sdkApi, JSONObject data, HttpHeaders headers, R info) {
         int ret = executeSdk(sdkApi, data, headers, info);
         if (ERR_COMMON_SUCCEED != ret) {
-            logger.error("修改失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+            logger.error("SDK修改失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "修改失败");
         }
         return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(info));
@@ -82,7 +83,6 @@ public final class CommonService {
     public static <R extends Structure> JSONObject query(QueryAPI<R> qAPI, String con, HttpHeaders headers, R r, SDKConst.QUERY_CON_TYPE type) {
 
         String name = r.getClass().getName();
-        logger.info("接口：" + name + "调用查询，查询条件为" + con);
 
         Structure Condition;
         switch (type) {
@@ -102,7 +102,7 @@ public final class CommonService {
         /* 解析JSON中的查询条件 */
         int ret = QueryConditionMng.buildCondition(Condition, pstQueryPageInfo, con, type);
         if (ERR_COMMON_SUCCEED != ret) {
-            logger.error(name + ":查询条件错误!");
+            logger.error("{}:查询条件错误!", name);
             return ResponseInfoMng.errorRsp(ret, "查询条件错误：详情请查看服务端日志信息");
         }
 
@@ -111,7 +111,7 @@ public final class CommonService {
         /* 调用C库函数开始查询 */
         ret = qAPI.query(headers, Condition, pstQueryPageInfo, pstRspPageInfo, Results);
         if (ERR_COMMON_SUCCEED != ret) {
-            logger.error(name + ":查询信息列表失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+            logger.error("查询信息列表失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "查询信息列表失败");
         }
 
@@ -139,16 +139,14 @@ public final class CommonService {
      */
     public static JSONObject delete(DeleteAPI dAPI, String code, HttpHeaders headers) {
 
-        String name = dAPI.getClass().getName();
-
         if (null == code || code.isEmpty()) {
-            logger.error(name + ":无效入参");
+            logger.error("{}:无效入参");
             return ResponseInfoMng.errorRsp(1, "无效入参");
         }
 
         int ret = dAPI.delete(headers, code);
         if (ERR_COMMON_SUCCEED != ret) {
-            logger.error(name + ":手动删除信息失败，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+            logger.error("手动删除信息失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "手动删除信息失败");
         }
 

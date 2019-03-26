@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.jna.Structure;
 import com.zdl.code.exception.StructException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class StructUtils {
 
-    private static Logger logger = Logger.getLogger(StructUtils.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(StructUtils.class);
 
     private Structure stru;
 
@@ -84,13 +85,13 @@ public class StructUtils {
             }
 
             if (1 != find) {
-                logger.debug(strName + "该结构体类型中没有Json中的" + entry.getKey() + "变量");
+                logger.debug("{}该结构体类型中没有Json中的{}变量", strName, entry.getKey());
             }
 
         }
 
         if (0 == e) {
-            logger.error(strName + "结构体类型与Json不匹配");
+            logger.error("{}结构体类型与Json不匹配", strName);
         }
 
         return structure;

@@ -2,7 +2,8 @@ package com.zdl.code.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.server.ResponseInfoMng;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -17,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/gethello")
 public class HellowResource {
 
-    public static Logger logger = Logger.getLogger(HellowResource.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(HellowResource.class);
 
     @GET
     @Produces("application/json;charset=UTF-8")

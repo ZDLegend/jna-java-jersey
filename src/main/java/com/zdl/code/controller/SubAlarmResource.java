@@ -5,7 +5,8 @@ import com.zdl.code.call.CallAlarm;
 import com.zdl.code.call.CallBackProcPF;
 import com.zdl.code.server.ResponseInfoMng;
 import com.zdl.code.server.SDKHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
 import javax.ws.rs.*;
@@ -28,7 +29,7 @@ import static com.zdl.code.jna.SDKErrorCode.ERR_JSON_LACK_FIELD;
 @Path("/alarm")
 public class SubAlarmResource {
 
-    private static Logger logger = Logger.getLogger(SubAlarmResource.class);
+    private static Logger logger = LoggerFactory.getLogger(SubAlarmResource.class);
 
     private static CallBackProcPF ins = CallBackProcPF.getInstance();
     private static CallAlarm fins = CallAlarm.getInstance();
@@ -56,7 +57,7 @@ public class SubAlarmResource {
                 if (callMethodMap.containsKey(type)) {
                     callMethodMap.get(type).getFirst().accept(username, data.getString("data"));
                 } else {
-                    logger.error("订阅告警类型错误:" + type);
+                    logger.error("订阅告警类型错误:{}", type);
                     return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
                 }
             } else {
@@ -92,7 +93,7 @@ public class SubAlarmResource {
         if (callMethodMap.containsKey(type)) {
             callMethodMap.get(type).getSecond().accept(username);
         } else {
-            logger.error("订阅告警类型错误:" + type);
+            logger.error("订阅告警类型错误:{}", type);
             return ResponseInfoMng.errorRsp(50012, "订阅告警失败");
         }
 

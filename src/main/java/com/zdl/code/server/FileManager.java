@@ -1,7 +1,8 @@
 package com.zdl.code.server;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -13,7 +14,7 @@ import java.nio.charset.Charset;
  */
 public class FileManager {
 
-    private static Logger logger = Logger.getLogger(FileManager.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(FileManager.class);
 
     /**
      * 文件中有内容转化成字符串

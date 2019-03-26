@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zdl.code.call.CallAlarm;
 import com.zdl.code.call.CallBackProcPF;
 import com.zdl.code.jna.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +29,7 @@ public class SDKHandler {
 
     public static SDKStructure.USER_LOGIN_ID_INFO_S UserLoginIDInfo = new SDKStructure.USER_LOGIN_ID_INFO_S();
 
-    private static Logger logger = Logger.getLogger(SDKHandler.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SDKHandler.class);
 
     static {
         StringUtils.ArrayCopy(UserLoginIDInfo.szUserLoginCode, "IS_INSIDE_V5_INNER".getBytes());
@@ -53,7 +54,7 @@ public class SDKHandler {
 
         int ret = SPS_SDK.IMOS_SPS_init();
         if (SDKErrorCode.ERR_COMMON_SUCCEED != ret) {
-            logger.error("初始化SPS失败," + ResponseInfoMng.getErrmsg(ret) + "返回错误码:" + ret);
+            logger.error("初始化SPS失败,{}返回错误码:{}", ResponseInfoMng.getErrmsg(ret), ret);
             throw new RuntimeException("初始化SPS失败,返回错误码:" + ret);
         } else {
             logger.info("SPS初始化成功");
@@ -61,7 +62,7 @@ public class SDKHandler {
 
         ret = ZDL_SDK.ZDL_InitRestful(serverIP, CallBackProcPF.getInstance(), CallAlarm.getInstance());
         if (SDKErrorCode.ERR_COMMON_SUCCEED != ret) {
-            logger.error("初始化SDK失败," + ResponseInfoMng.getErrmsg(ret) + "返回错误码:" + ret);
+            logger.error("初始化SDK失败,{}返回错误码:{}", ResponseInfoMng.getErrmsg(ret), ret);
             throw new RuntimeException("初始化SDK失败,返回错误码:" + ret);
         } else {
             logger.info("SDK初始化成功");
@@ -109,7 +110,7 @@ public class SDKHandler {
 
         int ret = ZDL_SDK.ZDL_AssignRoleForUser(getUserLoginIDInfo(headers), usercode, rolecode, RoleCount);
         if (SDKErrorCode.ERR_COMMON_SUCCEED != ret) {
-            logger.error("为用户赋予角色，" + ResponseInfoMng.getErrmsg(ret) + "！返回错误码：" + ret);
+            logger.error("为用户赋予角色,{}返回错误码:{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "为用户赋予角色");
         }
         return ResponseInfoMng.correctRsp();

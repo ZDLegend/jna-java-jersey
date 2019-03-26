@@ -7,7 +7,8 @@ import com.zdl.code.jna.SDKConst;
 import com.zdl.code.jna.SDKErrorCode;
 import com.zdl.code.jna.SDKStructure;
 import com.zdl.code.jna.SPStructure;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by ZDLegend on 2016/8/27.
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  */
 public class QueryConditionMng {
 
-    private static Logger logger = Logger.getLogger(QueryConditionMng.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(QueryConditionMng.class);
 
     public static void createSPSQueryItem(String QueryColumn, int LogicFlag, String QueryData, SPStructure.SPS_QUERY_CONDITION_ITEM_S c) {
         c.ulLogicFlag = LogicFlag;
@@ -57,7 +58,7 @@ public class QueryConditionMng {
 
         int PageRowNum = rep.getInteger("PageRowNum");
         if (PageRowNum < 0 || PageRowNum > SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM) {
-            logger.error("分页查询中每页的最大条目数不能超过" + SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
+            logger.error("分页查询中每页的最大条目数不能超过{}", SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
             return SDKErrorCode.ERR_QUERY_MAX_NUM;
         }
 
@@ -69,7 +70,7 @@ public class QueryConditionMng {
 
             int ItemNum = rep.getInteger("ItemNum");
             if (ItemNum < 0 || ItemNum > SDKConst.ZDL_QUERY_ITEM_MAX_NUM) {
-                logger.error("查询条件最大条目数不能超过" + SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
+                logger.error("查询条件最大条目数不能超过{}", SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
                 return SDKErrorCode.ERR_QUERY_MAX_NUM;
             }
 

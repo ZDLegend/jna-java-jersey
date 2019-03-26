@@ -1,10 +1,8 @@
 package com.zdl.code;
 
-import com.sun.jna.Platform;
+
 import com.zdl.code.server.AuthorizationRequestFilter;
 import com.zdl.code.server.HttpUtils;
-import com.zdl.code.server.StringUtils;
-import org.apache.log4j.PropertyConfigurator;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
@@ -31,11 +29,5 @@ public class JerseyConfig extends ResourceConfig {
         packages("com.zdl.code.controller");
         register(LoggingFeature.class);
         register(AuthorizationRequestFilter.class);
-
-        /* 初始化日志配置 */
-        String res = (Platform.isWindows() ? "../log4j.properties" : "../log4j_linux.properties");
-        String url = this.getClass().getResource(res).getPath();
-        String path = StringUtils.spaceString(url);
-        PropertyConfigurator.configure(path);
     }
 }
