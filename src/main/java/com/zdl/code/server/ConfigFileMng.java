@@ -10,8 +10,6 @@ public class ConfigFileMng {
 
     private static String ServerIp;
 
-    private static String imagePath;
-
     private static String password;
 
     private static ConfigFileMng instance = new ConfigFileMng();
@@ -38,14 +36,6 @@ public class ConfigFileMng {
         ServerIp = serverIp;
     }
 
-    public static String getImagePath() {
-        return imagePath;
-    }
-
-    public static void setImagePath(String imagePath) {
-        ConfigFileMng.imagePath = imagePath;
-    }
-
     public static String getPassword() {
         return password;
     }
@@ -55,6 +45,6 @@ public class ConfigFileMng {
     }
 
     public String toString() {
-        return "\nServerIP:" + ServerIp + "\nImagePath:" + imagePath;
+        return "\nServerIP:" + ServerIp;
     }
 }

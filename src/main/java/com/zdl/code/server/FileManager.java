@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
@@ -17,36 +20,23 @@ public class FileManager {
     private static Logger logger = LoggerFactory.getLogger(FileManager.class);
 
     /**
-     * 文件中有内容转化成字符串
+     * 文件中所有内容转化成字符串
      */
     public static String ReadFile(String name) {
-
         File file = new File(name);
-        BufferedReader reader = null;
-        String laststr = "";
-        try {
-            reader = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(file), Charset.forName("UTF-8")));
-
+        StringBuilder laststr = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(file), Charset.forName("UTF-8")));) {
             String tempString;
-
             while ((tempString = reader.readLine()) != null) {
-                laststr = laststr + tempString.trim();
+                laststr.append(tempString.trim());
             }
-            reader.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e1) {
-
-                }
-            }
+            logger.error("ReadFile error", e);
         }
-        return laststr;
+
+        return laststr.toString();
     }
 
 
@@ -54,14 +44,11 @@ public class FileManager {
      * 把json格式存储的文件转化成json格式数据
      */
     public static JSONObject file2Json(String filename) {
-
         String str = ReadFile(filename);
-
         String f = str.substring(0, 2);
         if (f.equals("\uFEFF{")) {
             str = str.replace(f, "{");
         }
-
         return JSONObject.parseObject(str);
     }
 }
