@@ -24,19 +24,19 @@ public class FileManager {
      */
     public static String ReadFile(String name) {
         File file = new File(name);
-        StringBuilder laststr = new StringBuilder();
+        StringBuilder lastStr = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(file), Charset.forName("UTF-8")));) {
+                        new FileInputStream(file), Charset.forName("UTF-8")))) {
             String tempString;
             while ((tempString = reader.readLine()) != null) {
-                laststr.append(tempString.trim());
+                lastStr.append(tempString.trim());
             }
         } catch (Exception e) {
             logger.error("ReadFile error", e);
         }
 
-        return laststr.toString();
+        return lastStr.toString();
     }
 
 
