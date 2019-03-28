@@ -6,7 +6,10 @@ import com.zdl.code.call.CallBackProcPF;
 import com.zdl.code.jna.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import javax.ws.rs.core.HttpHeaders;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -14,12 +17,17 @@ import java.util.Arrays;
 /**
  * Created by ZDLegend on 2016/8/1.
  */
+@Configuration
 public class SDKHandler {
 
     /**
      * restful接口连接的SDK服务器IP地址
      */
-    private static String serverIP;
+    private static String serverIp;
+
+    private static String loginCode;
+
+    private static String userCode;
 
     /**
      * 加载各类SDK库文件（DLL/SO）
@@ -31,26 +39,17 @@ public class SDKHandler {
 
     private static Logger logger = LoggerFactory.getLogger(SDKHandler.class);
 
-    static {
-        StringUtils.ArrayCopy(UserLoginIDInfo.szUserLoginCode, "IS_INSIDE_V5_INNER".getBytes());
-        StringUtils.ArrayCopy(UserLoginIDInfo.szUserCode, "0000".getBytes());
-    }
-
-    public SDKHandler() {
-        try {
-            ZDL_SDK = SDKFunction.INSTANCE;
-            SPS_SDK = SPSFunction.INSTANCE;
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-        serverIP = ConfigFileMng.getServerIp();
-    }
-
     /**
      * 初始化sdk
      */
+    @PostConstruct
     public void init() {
+
+        ZDL_SDK = SDKFunction.INSTANCE;
+        SPS_SDK = SPSFunction.INSTANCE;
+
+        StringUtils.ArrayCopy(UserLoginIDInfo.szUserLoginCode, loginCode.getBytes());
+        StringUtils.ArrayCopy(UserLoginIDInfo.szUserCode, userCode.getBytes());
 
         int ret = SPS_SDK.IMOS_SPS_init();
         if (SDKErrorCode.ERR_COMMON_SUCCEED != ret) {
@@ -60,7 +59,7 @@ public class SDKHandler {
             logger.info("SPS初始化成功");
         }
 
-        ret = ZDL_SDK.ZDL_InitRestful(serverIP, CallBackProcPF.getInstance(), CallAlarm.getInstance());
+        ret = ZDL_SDK.ZDL_InitRestful(serverIp, CallBackProcPF.getInstance(), CallAlarm.getInstance());
         if (SDKErrorCode.ERR_COMMON_SUCCEED != ret) {
             logger.error("初始化SDK失败,{}返回错误码:{}", ResponseInfoMng.getErrmsg(ret), ret);
             throw new RuntimeException("初始化SDK失败,返回错误码:" + ret);
@@ -135,5 +134,20 @@ public class SDKHandler {
         }
 
         return Arrays.toString(userInfoS.szUserName).trim();
+    }
+
+    @Value("sdk.server.config.ip")
+    public String getServerIP() {
+        return serverIp;
+    }
+
+    @Value("sdk.server.config.login-code")
+    public String getLoginCode() {
+        return loginCode;
+    }
+
+    @Value("sdk.server.config.user-code")
+    public String getUserCode() {
+        return userCode;
     }
 }
