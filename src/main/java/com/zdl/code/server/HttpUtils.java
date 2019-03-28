@@ -17,6 +17,9 @@ public class HttpUtils {
 
     private static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
+    private HttpUtils() {
+    }
+
     private static final int CONNECTION_TIME_OUT = 30000;
 
     public static void sendAlarm(String url, String data) {

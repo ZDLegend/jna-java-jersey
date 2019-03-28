@@ -40,7 +40,7 @@ public final class CommonService {
             logger.error("SDK返回失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "修改失败");
         }
-        return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(sdkApi.getOut()));
+        return ResponseInfoMng.correctRsp(StructUtils.struct2Json(sdkApi.getOut()));
     }
 
     /**
@@ -63,13 +63,13 @@ public final class CommonService {
             logger.error("SDK修改失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "修改失败");
         }
-        return ResponseInfoMng.correctRsp(StructUtils.Struct2Json(info));
+        return ResponseInfoMng.correctRsp(StructUtils.struct2Json(info));
     }
 
     private static <R extends Structure> int executeSdk(BiFunction<HttpHeaders, R, Integer> sdkApi, JSONObject data, HttpHeaders headers, R info) {
 
         try {
-            StructUtils.Json2Struct(data, info);
+            StructUtils.json2Struct(data, info);
         } catch (StructException e) {
             return ERR_JSON_TO_STRUCT;
         }
@@ -84,13 +84,13 @@ public final class CommonService {
 
         String name = r.getClass().getName();
 
-        Structure Condition;
+        Structure condition;
         switch (type) {
             case COM_CON:
-                Condition = new SDKStructure.COMMON_QUERY_CONDITION_S();
+                condition = new SDKStructure.COMMON_QUERY_CONDITION_S();
                 break;
             case ZDL_CON:
-                Condition = new SPStructure.SPS_COMMON_QUERY_CONDITION_S();
+                condition = new SPStructure.SPS_COMMON_QUERY_CONDITION_S();
                 break;
             default:
                 return ResponseInfoMng.errorRsp(1, "无效的查询条件类型");
@@ -100,16 +100,16 @@ public final class CommonService {
         SDKStructure.RSP_PAGE_INFO_S pstRspPageInfo = new SDKStructure.RSP_PAGE_INFO_S();
 
         /* 解析JSON中的查询条件 */
-        int ret = QueryConditionMng.buildCondition(Condition, pstQueryPageInfo, con, type);
+        int ret = QueryConditionMng.buildCondition(condition, pstQueryPageInfo, con, type);
         if (ERR_COMMON_SUCCEED != ret) {
             logger.error("{}:查询条件错误!", name);
             return ResponseInfoMng.errorRsp(ret, "查询条件错误：详情请查看服务端日志信息");
         }
 
-        R[] Results = (R[]) r.toArray(pstQueryPageInfo.ulPageRowNum);
+        R[] results = (R[]) r.toArray(pstQueryPageInfo.ulPageRowNum);
 
         /* 调用C库函数开始查询 */
-        ret = qAPI.query(headers, Condition, pstQueryPageInfo, pstRspPageInfo, Results);
+        ret = qAPI.query(headers, condition, pstQueryPageInfo, pstRspPageInfo, results);
         if (ERR_COMMON_SUCCEED != ret) {
             logger.error("查询信息列表失败，{}！返回错误码：{}", ResponseInfoMng.getErrmsg(ret), ret);
             return ResponseInfoMng.errorRsp(ret, "查询信息列表失败");
@@ -119,16 +119,16 @@ public final class CommonService {
         JSONArray jsonArray = new JSONArray();
 
         for (int i = 0; i < pstRspPageInfo.ulRowNum; i++) {
-            JSONObject resp = StructUtils.Struct2Json(Results[i]);
+            JSONObject resp = StructUtils.struct2Json(results[i]);
             jsonArray.add(i, resp);
         }
 
-        JSONObject RspPageInfo = new JSONObject();
-        RspPageInfo.put("RowNum", pstRspPageInfo.ulRowNum);
-        RspPageInfo.put("TotalRowNum", pstRspPageInfo.ulTotalRowNum);
+        JSONObject rspPageInfo = new JSONObject();
+        rspPageInfo.put("RowNum", pstRspPageInfo.ulRowNum);
+        rspPageInfo.put("TotalRowNum", pstRspPageInfo.ulTotalRowNum);
 
         JSONObject object = new JSONObject();
-        object.put("RspPageInfo", RspPageInfo);
+        object.put("RspPageInfo", rspPageInfo);
         object.put("InfoList", jsonArray);
 
         return ResponseInfoMng.correctRsp(object);
@@ -140,7 +140,7 @@ public final class CommonService {
     public static JSONObject delete(DeleteAPI dAPI, String code, HttpHeaders headers) {
 
         if (null == code || code.isEmpty()) {
-            logger.error("{}:无效入参");
+            logger.error("无效入参");
             return ResponseInfoMng.errorRsp(1, "无效入参");
         }
 

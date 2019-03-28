@@ -15,25 +15,30 @@ import org.slf4j.LoggerFactory;
  * <p>
  * 解析JSON格式的查询条件字符串
  */
-public class QueryConditionMng {
+public final class QueryConditionMng {
 
     private static Logger logger = LoggerFactory.getLogger(QueryConditionMng.class);
 
-    public static void createSPSQueryItem(String QueryColumn, int LogicFlag, String QueryData, SPStructure.SPS_QUERY_CONDITION_ITEM_S c) {
-        c.ulLogicFlag = LogicFlag;
-        StringUtils.setSdkBytes(c.szQueryColumn, QueryColumn);
-        StringUtils.setSdkBytes(c.szQueryData, QueryData);
+    private QueryConditionMng() {
     }
 
-    public static void createSDKQueryItem(int QueryType, int LogicFlag, String QueryData, SDKStructure.QUERY_CONDITION_ITEM_S c) {
-        c.ulQueryType = QueryType;
-        c.ulLogicFlag = LogicFlag;
-        StringUtils.setSdkBytes(c.szQueryData, QueryData);
+    private static void createSPSQueryItem(String queryColumn, int logicFlag, String queryData, SPStructure.SPS_QUERY_CONDITION_ITEM_S c) {
+        c.ulLogicFlag = logicFlag;
+        StringUtils.setSdkBytes(c.szQueryColumn, queryColumn);
+        StringUtils.setSdkBytes(c.szQueryData, queryData);
+    }
+
+    private static void createSDKQueryItem(int queryType, int logicFlag, String queryData, SDKStructure.QUERY_CONDITION_ITEM_S c) {
+        c.ulQueryType = queryType;
+        c.ulLogicFlag = logicFlag;
+        StringUtils.setSdkBytes(c.szQueryData, queryData);
 
     }
 
-    public static int buildCondition(Structure QueryCondition,
-                                     SDKStructure.QUERY_PAGE_INFO_S pstQueryPageInfo, String cond, SDKConst.QUERY_CON_TYPE type) {
+    public static int buildCondition(Structure queryCondition,
+                                     SDKStructure.QUERY_PAGE_INFO_S pstQueryPageInfo,
+                                     String cond,
+                                     SDKConst.QUERY_CON_TYPE type) {
 
         /* 验证JSON字符串入参并建立建立JSON格式数据 */
         if (null == pstQueryPageInfo) {
@@ -56,20 +61,20 @@ public class QueryConditionMng {
             return SDKErrorCode.ERR_JSON_LACK_FIELD;
         }
 
-        int PageRowNum = rep.getInteger("PageRowNum");
-        if (PageRowNum < 0 || PageRowNum > SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM) {
+        int pageRowNum = rep.getInteger("PageRowNum");
+        if (pageRowNum < 0 || pageRowNum > SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM) {
             logger.error("分页查询中每页的最大条目数不能超过{}", SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
             return SDKErrorCode.ERR_QUERY_MAX_NUM;
         }
 
         if (rep.containsKey("ItemNum") && rep.containsKey("condition")) {
-            if (null == QueryCondition) {
+            if (null == queryCondition) {
                 logger.error("无效入参");
                 return SDKErrorCode.ERR_INVALID_INPUT;
             }
 
-            int ItemNum = rep.getInteger("ItemNum");
-            if (ItemNum < 0 || ItemNum > SDKConst.ZDL_QUERY_ITEM_MAX_NUM) {
+            int itemNum = rep.getInteger("ItemNum");
+            if (itemNum < 0 || itemNum > SDKConst.ZDL_QUERY_ITEM_MAX_NUM) {
                 logger.error("查询条件最大条目数不能超过{}", SDKConst.ZDL_PAGE_QUERY_ROW_MAX_NUM);
                 return SDKErrorCode.ERR_QUERY_MAX_NUM;
             }
@@ -80,13 +85,13 @@ public class QueryConditionMng {
             switch (type) {
 
                 case COM_CON:
-                    SDKStructure.COMMON_QUERY_CONDITION_S pstQueryCondition = (SDKStructure.COMMON_QUERY_CONDITION_S) QueryCondition;
-                    pstQueryCondition.ulItemNum = ItemNum;
-                    if (ItemNum > condLen) {
+                    SDKStructure.COMMON_QUERY_CONDITION_S pstQueryCondition = (SDKStructure.COMMON_QUERY_CONDITION_S) queryCondition;
+                    pstQueryCondition.ulItemNum = itemNum;
+                    if (itemNum > condLen) {
                         return 50010;
                     }
 
-                    for (int i = 0; i < ItemNum; i++) {
+                    for (int i = 0; i < itemNum; i++) {
                         JSONObject con = condition.getJSONObject(i);
                         if (null == con.get("QueryData")) {
                             continue;
@@ -99,13 +104,13 @@ public class QueryConditionMng {
                     }
                     break;
                 case ZDL_CON:
-                    SPStructure.SPS_COMMON_QUERY_CONDITION_S pstSPSQueryCondition = (SPStructure.SPS_COMMON_QUERY_CONDITION_S) QueryCondition;
-                    pstSPSQueryCondition.ulItemNum = ItemNum;
-                    if (ItemNum > condLen) {
+                    SPStructure.SPS_COMMON_QUERY_CONDITION_S pstSPSQueryCondition = (SPStructure.SPS_COMMON_QUERY_CONDITION_S) queryCondition;
+                    pstSPSQueryCondition.ulItemNum = itemNum;
+                    if (itemNum > condLen) {
                         return 50010;
                     }
 
-                    for (int i = 0; i < ItemNum; i++) {
+                    for (int i = 0; i < itemNum; i++) {
                         JSONObject con = condition.getJSONObject(i);
                         if (null == con.get("QueryData")) {
                             continue;
@@ -124,7 +129,7 @@ public class QueryConditionMng {
 
         pstQueryPageInfo.bQueryCount = rep.getInteger("QueryCount");
         pstQueryPageInfo.ulPageFirstRowNumber = rep.getInteger("PageFirstRowNumber");
-        pstQueryPageInfo.ulPageRowNum = PageRowNum;
+        pstQueryPageInfo.ulPageRowNum = pageRowNum;
 
         return SDKErrorCode.ERR_COMMON_SUCCEED;
     }

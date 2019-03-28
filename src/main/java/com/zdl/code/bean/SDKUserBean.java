@@ -80,24 +80,22 @@ public class SDKUserBean {
 
         switch (type) {
             case "token":
-
-                /** acess_token 48小时未使用则删除 */
+                /* acess_token 48小时未使用则删除 */
                 timerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        logger.info("access_token:" + uuid + "超时删除");
+                        logger.info("access_token:{}超时删除", uuid);
                         UserManager.getInstance().removeAccessToken(getUuid());
                     }
                 };
                 timer.schedule(timerTask, UserManager.MAX_TIME_TOKEN_KEEP);
                 break;
             case "code":
-
-                /** acess_code 5分钟没有被第二次登陆接口调用则删除 */
+                /* acess_code 5分钟没有被第二次登陆接口调用则删除 */
                 timerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        logger.info("access_code:" + uuid + "超时删除");
+                        logger.info("access_code:{}超时删除", uuid);
                         UserManager.getInstance().removeAccessCode(getUuid());
                     }
                 };
@@ -120,11 +118,11 @@ public class SDKUserBean {
     /**
      * 第二次调用登陆接口验证access_code成功时，升级用户为token类型
      */
-    public void updateUser(String access_token, SDKStructure.USER_INFO_S userInfo) {
+    public void updateUser(String accessToken, SDKStructure.USER_INFO_S userInfo) {
         setType("token");
         setUserInfo(userInfo);
         setUserLoginIDInfo();
-        setUuid(access_token);
+        setUuid(accessToken);
         updateTime();
         cancelTask();
         initTimer();
@@ -204,13 +202,13 @@ public class SDKUserBean {
 
     public void setUserLoginIDInfo() {
 
-        StringUtils.ArrayCopy(this.userLoginIDInfo.szUserCode, userInfo.szUserCode);
+        StringUtils.arrayCopy(this.userLoginIDInfo.szUserCode, userInfo.szUserCode);
         StringUtils.setSdkBytes(this.userLoginIDInfo.szUserLoginCode, "IMOS_INSIDE_V5_INNER");
     }
 
     public String toString() {
-        String usercode = StringUtils.bytesToString(this.userLoginIDInfo.szUserCode);
-        return "usercode = " + usercode + ", buildTime = " + buildTime + ", updateTime = "
+        String userCode = StringUtils.bytesToString(this.userLoginIDInfo.szUserCode);
+        return "userCode = " + userCode + ", buildTime = " + buildTime + ", updateTime = "
                 + updateTime + ", access_" + type + " = " + uuid;
     }
 }

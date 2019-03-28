@@ -35,6 +35,6 @@ public class RoleDao implements CreateAPI<ComStructure.ROLE_INFO> {
 
     @Override
     public int create(HttpHeaders headers, ComStructure.ROLE_INFO data) {
-        return SDK.ZDL_AssignRoleForUser(SDKHandler.UserLoginIDInfo, data.szUserCode, aszRoleCode, data.ulRoleCount);
+        return SDK.ZDL_AssignRoleForUser(SDKHandler.userLoginIDInfo, data.szUserCode, aszRoleCode, data.ulRoleCount);
     }
 }

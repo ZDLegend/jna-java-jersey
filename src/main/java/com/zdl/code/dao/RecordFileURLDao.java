@@ -17,7 +17,7 @@ public class RecordFileURLDao implements CommonAPI<SDKStructure.GET_URL_INFO_S, 
 
     @Override
     public int execute(HttpHeaders headers, SDKStructure.GET_URL_INFO_S data) {
-        return SDKFunction.INSTANCE.ZDL_GetRecordFileURL(SDKHandler.UserLoginIDInfo, data, pstSDKURLInfo);
+        return SDKFunction.INSTANCE.ZDL_GetRecordFileURL(SDKHandler.userLoginIDInfo, data, pstSDKURLInfo);
     }
 
     @Override

@@ -14,8 +14,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import static com.zdl.code.jna.SDKErrorCode.ERR_COMMON_SUCCEED;
-import static com.zdl.code.server.StringUtils.MD5Util;
 import static com.zdl.code.server.StringUtils.getBASE64;
+import static com.zdl.code.server.StringUtils.md5Util;
 
 /**
  * Created by ZDLegend on 2016/10/19.
@@ -36,14 +36,14 @@ public class SDKLoginResource {
     private static Logger logger = LoggerFactory.getLogger(SDKLoginResource.class);
 
     @POST
-    public JSONObject UserLogin(JSONObject jsonObject) {
+    public JSONObject userLogin(JSONObject jsonObject) {
 
         JSONObject resp = new JSONObject();
 
         /* 第一次调用登录接口时不携带任何数据 */
         if (null == jsonObject) {
-            String access_code = UserManager.getInstance().createAccessCode();
-            resp.put("access_code", access_code);
+            String accessCode = UserManager.getInstance().createAccessCode();
+            resp.put("access_code", accessCode);
             resp.put("encryption", "md5");
             return resp;
         }
@@ -62,10 +62,10 @@ public class SDKLoginResource {
             String user = jsonObject.getString("username");
             String username = getBASE64(user);
 
-            String access_code = jsonObject.getString("access_code");
-            String login_signature = jsonObject.getString("login_signature");
+            String accessCode = jsonObject.getString("access_code");
+            String loginSignature = jsonObject.getString("login_signature");
 
-            if (!UserManager.getInstance().checkAccessCode(access_code)) {
+            if (!UserManager.getInstance().checkAccessCode(accessCode)) {
                 logger.error("验证access_code失败");
                 return ResponseInfoMng.errorRsp(1, "验证access_code失败");
             }
@@ -77,13 +77,10 @@ public class SDKLoginResource {
                 return ResponseInfoMng.errorRsp(ret, "获取密码失败");
             }
 
-            System.out.println(username);
             String password = new String(pstPassword.szPassword).trim();
-            System.out.println(MD5Util(username + access_code + password));
-            System.out.println(password);
-            if (login_signature.equals(MD5Util(username + access_code + password))) {
-                String access_token = UserManager.getInstance().createAccessToken(access_code, pstPassword.stUserInfo);
-                resp.put("access_token", access_token);
+            if (loginSignature.equals(md5Util(username + accessCode + password))) {
+                String accessToken = UserManager.getInstance().createAccessToken(accessCode, pstPassword.stUserInfo);
+                resp.put("access_token", accessToken);
                 logger.info("登录成功");
                 return resp;
             } else {

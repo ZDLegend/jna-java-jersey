@@ -15,14 +15,17 @@ import java.nio.charset.Charset;
  * <p>
  * 关于文件操作相关的函数写在这里
  */
-public class FileManager {
+public final class FileManager {
 
     private static Logger logger = LoggerFactory.getLogger(FileManager.class);
+
+    private FileManager() {
+    }
 
     /**
      * 文件中所有内容转化成字符串
      */
-    public static String ReadFile(String name) {
+    public static String readFile(String name) {
         File file = new File(name);
         StringBuilder lastStr = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(
@@ -33,7 +36,7 @@ public class FileManager {
                 lastStr.append(tempString.trim());
             }
         } catch (Exception e) {
-            logger.error("ReadFile error", e);
+            logger.error("readFile error", e);
         }
 
         return lastStr.toString();
@@ -44,7 +47,7 @@ public class FileManager {
      * 把json格式存储的文件转化成json格式数据
      */
     public static JSONObject file2Json(String filename) {
-        String str = ReadFile(filename);
+        String str = readFile(filename);
         String f = str.substring(0, 2);
         if (f.equals("\uFEFF{")) {
             str = str.replace(f, "{");

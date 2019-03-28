@@ -17,10 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CallAlarm implements SPSFunction.SPS_CALL_BACK_ALARM_PROC_PF {
 
-    private boolean OpenFaceAlarm = false;
-    private boolean OpenNapAlarm = false;
-    private ConcurrentHashMap<String, String> FaceData = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, String> NapData = new ConcurrentHashMap<>();
+    private boolean openFaceAlarm = false;
+    private boolean openNapAlarm = false;
+    private ConcurrentHashMap<String, String> faceData = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> napData = new ConcurrentHashMap<>();
 
     /**
      * 单例模式防止回调类被GC回收
@@ -36,37 +36,37 @@ public class CallAlarm implements SPSFunction.SPS_CALL_BACK_ALARM_PROC_PF {
     }
 
     public boolean isOpenFaceAlarm() {
-        return OpenFaceAlarm;
+        return openFaceAlarm;
     }
 
     public boolean isOpenNapAlarm() {
-        return OpenNapAlarm;
+        return openNapAlarm;
     }
 
     public void openFaceAlarm(String name, String data) {
-        if (!OpenFaceAlarm) OpenFaceAlarm = true;
-        FaceData.put(name, data);
+        if (!openFaceAlarm) openFaceAlarm = true;
+        faceData.put(name, data);
     }
 
     public void openNapAlarm(String name, String data) {
-        if (!OpenNapAlarm) OpenNapAlarm = true;
-        NapData.put(name, data);
+        if (!openNapAlarm) openNapAlarm = true;
+        napData.put(name, data);
     }
 
     public void closeFaceAlarm(String name) {
-        FaceData.remove(name);
-        if (FaceData.size() == 0) OpenFaceAlarm = false;
+        faceData.remove(name);
+        if (faceData.size() == 0) openFaceAlarm = false;
     }
 
     public void closeNapAlarm(String name) {
-        NapData.remove(name);
-        if (NapData.size() == 0) OpenNapAlarm = false;
+        napData.remove(name);
+        if (napData.size() == 0) openNapAlarm = false;
     }
 
     @Override
     public void invoke(int ulCmdID, Pointer pParam) {
 
-        if (!OpenFaceAlarm && !OpenNapAlarm) return;
+        if (!openFaceAlarm && !openNapAlarm) return;
 
         switch (ulCmdID) {
             case SDKConst.NOTIFYTO_FACE_ALARM_INFO:
@@ -78,8 +78,8 @@ public class CallAlarm implements SPSFunction.SPS_CALL_BACK_ALARM_PROC_PF {
                 facePointer.write(0, pParam.getByteArray(0, faceAlarmS.size()), 0, faceAlarmS.size());
                 faceAlarmS.read();
 
-                String facedata = StructUtils.Struct2Json(faceAlarmS).toString();
-                FaceData.forEachValue(Long.MAX_VALUE, (s1) -> HttpUtils.sendAlarm(s1, facedata));
+                String facedata = StructUtils.struct2Json(faceAlarmS).toString();
+                faceData.forEachValue(Long.MAX_VALUE, s1 -> HttpUtils.sendAlarm(s1, facedata));
 
                 break;
 
@@ -90,8 +90,8 @@ public class CallAlarm implements SPSFunction.SPS_CALL_BACK_ALARM_PROC_PF {
                 snapPointer.write(0, pParam.getByteArray(0, facesnapInfoS.size()), 0, facesnapInfoS.size());
                 facesnapInfoS.read();
 
-                String snapdata = StructUtils.Struct2Json(facesnapInfoS).toString();
-                NapData.forEachValue(Long.MAX_VALUE, (s1) -> HttpUtils.sendAlarm(s1, snapdata));
+                String snapdata = StructUtils.struct2Json(facesnapInfoS).toString();
+                napData.forEachValue(Long.MAX_VALUE, s1 -> HttpUtils.sendAlarm(s1, snapdata));
                 break;
             default:
                 break;

@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
 
-    private boolean OpenAlarm = false;
+    private boolean openAlarm = false;
     private ConcurrentHashMap<String, String> data = new ConcurrentHashMap<>();
     private static CallBackProcPF instance = new CallBackProcPF();
 
@@ -27,39 +27,37 @@ public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
     }
 
     public boolean isOpenAlarm() {
-        return OpenAlarm;
+        return openAlarm;
     }
 
     public void openAlarm() {
-        OpenAlarm = true;
+        openAlarm = true;
     }
 
     public void openAlarm(String name, String data) {
-        if (!OpenAlarm) OpenAlarm = true;
+        if (!openAlarm) openAlarm = true;
         this.data.put(name, data);
     }
 
     public void closeAlarm() {
-        OpenAlarm = false;
+        openAlarm = false;
     }
 
     public void closeAlarm(String name) {
         data.remove(name);
-        if (data.size() == 0) OpenAlarm = false;
+        if (data.size() == 0) openAlarm = false;
     }
 
     @Override
     public void invoke(SDKStructure.EVENT_RECORD_V2_S pstEventRecord) {
 
-        if (!OpenAlarm) return;
-
-        System.out.println("告警消息");
+        if (!openAlarm) return;
 
         String strData = StructUtils
                 .filterStruct(new ComStructure.EVENT_RECORD_FILT(), pstEventRecord)
-                .Struct2Json()
+                .struct2Json()
                 .toString();
 
-        data.forEachValue(Long.MAX_VALUE, (s1) -> HttpUtils.sendAlarm(s1, strData));
+        data.forEachValue(Long.MAX_VALUE, s1 -> HttpUtils.sendAlarm(s1, strData));
     }
 }

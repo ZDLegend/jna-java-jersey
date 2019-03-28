@@ -17,7 +17,7 @@ import java.util.Map;
  * 关于json的特殊操作函数写在这里
  * 提供json与结构体间相互转换方法
  */
-public class StructUtils {
+public final class StructUtils {
 
     private static Logger logger = LoggerFactory.getLogger(StructUtils.class);
 
@@ -30,7 +30,7 @@ public class StructUtils {
     /**
      * Json转结构体
      */
-    public static Structure Json2Struct(JSONObject jsonObject, Structure structure) throws StructException {
+    public static Structure json2Struct(JSONObject jsonObject, Structure structure) throws StructException {
 
         //获取结构体字段
         Field[] fields = structure.getClass().getDeclaredFields();
@@ -62,10 +62,10 @@ public class StructUtils {
                                 JSONArray array = (JSONArray) entry.getValue();
                                 int length = array.size();
                                 for (int i = 0; i < length; i++) {
-                                    Json2Struct((JSONObject) array.get(i), (Structure) Array.get(object, i));
+                                    json2Struct((JSONObject) array.get(i), (Structure) Array.get(object, i));
                                 }
                             } else {
-                                Json2Struct((JSONObject) entry.getValue(), (Structure) object);
+                                json2Struct((JSONObject) entry.getValue(), (Structure) object);
                             }
                         } else {
                             if (entry.getValue() instanceof String) {
@@ -101,7 +101,7 @@ public class StructUtils {
     /**
      * 结构体转Json
      */
-    public static JSONObject Struct2Json(Structure structure) {
+    public static JSONObject struct2Json(Structure structure) {
 
         JSONObject jsonObject = new JSONObject();
 
@@ -129,25 +129,25 @@ public class StructUtils {
                         JSONArray array = new JSONArray();
                         int length = Array.getLength(obj);
                         for (int i = 0; i < length; i++) {
-                            array.add(i, Struct2Json((Structure) Array.get(obj, i)));
+                            array.add(i, struct2Json((Structure) Array.get(obj, i)));
                         }
                         jsonObject.put(varName, array);
                     } else {
-                        jsonObject.put(varName, Struct2Json((Structure) obj));
+                        jsonObject.put(varName, struct2Json((Structure) obj));
                     }
                 } else {
                     jsonObject.put(varName, obj);
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error(ex.getMessage(), ex);
             }
         }
 
         return jsonObject;
     }
 
-    public JSONObject Struct2Json() {
+    public JSONObject struct2Json() {
 
 
         JSONObject jsonObject = new JSONObject();
@@ -162,9 +162,7 @@ public class StructUtils {
             varName = StringUtils.removLowerHaed(varName);
 
             try {
-                //打开修改权限
-                boolean access = field.isAccessible();
-                if (!access) field.setAccessible(true);
+                field.setAccessible(true);
 
                 //从obj中获取field变量
                 Object obj = field.get(stru);
@@ -176,7 +174,7 @@ public class StructUtils {
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error(ex.getMessage(), ex);
             }
         }
 
@@ -199,9 +197,7 @@ public class StructUtils {
             String varName = field.getName();
 
             try {
-                /* 打开修改权限 */
-                boolean access = field.isAccessible();
-                if (!access) field.setAccessible(true);
+                field.setAccessible(true);
 
                 /* 获取源field的变量 */
                 Object objSrc = src.getClass().getDeclaredField(varName).get(src);
@@ -210,13 +206,13 @@ public class StructUtils {
                 Object objDst = field.get(dst);
 
                 if (objDst.getClass().isAssignableFrom(byte[].class)) {
-                    StringUtils.ArrayCopy((byte[]) objDst, (byte[]) objSrc);
+                    StringUtils.arrayCopy((byte[]) objDst, (byte[]) objSrc);
                 } else {
                     field.set(dst, objSrc);
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error(ex.getMessage(), ex);
             }
         }
 

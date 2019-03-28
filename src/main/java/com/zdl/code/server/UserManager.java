@@ -17,27 +17,27 @@ public class UserManager {
     /**
      * 随机字符串长度
      */
-    public static final int RANDOM_STRING_LENGTH = 20;
+    private static final int RANDOM_STRING_LENGTH = 20;
 
     /**
      * access_token保留最长时间（48小时）
      */
-    public static final long MAX_TIME_TOKEN_KEEP = 48 * 60 * 60 * 1000;
+    public static final long MAX_TIME_TOKEN_KEEP = 48 * 60 * 60 * 1000L;
 
     /**
      * access_code保留最长时间（5分钟）
      */
-    public static final long MAX_TIME_CODE_KEEP = 5 * 60 * 1000;
+    public static final long MAX_TIME_CODE_KEEP = 5 * 60 * 1000L;
 
     /**
      * access_code管理
      */
-    private Map<String, SDKUserBean> AccessCodeMng = new ConcurrentHashMap<>();
+    private Map<String, SDKUserBean> accessCodeMng = new ConcurrentHashMap<>();
 
     /**
      * access_token管理
      */
-    private Map<String, SDKUserBean> AccessTokenMng = new ConcurrentHashMap<>();
+    private Map<String, SDKUserBean> accessTokenMng = new ConcurrentHashMap<>();
 
     private static UserManager instance = new UserManager();
 
@@ -53,31 +53,31 @@ public class UserManager {
      * Access_Code操作
      */
     public String createAccessCode() {
-        String access_code = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
+        String accessCode = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
 
-        if (checkAccessCode(access_code)) {
+        if (checkAccessCode(accessCode)) {
             return createAccessCode();
         } else {
-            SDKUserBean user = new SDKUserBean("code", access_code);
-            AccessCodeMng.put(access_code, user);
-            return access_code;
+            SDKUserBean user = new SDKUserBean("code", accessCode);
+            accessCodeMng.put(accessCode, user);
+            return accessCode;
         }
     }
 
-    public SDKUserBean getAccessCode(String access_code) {
-        return AccessCodeMng.get(access_code);
+    public SDKUserBean getAccessCode(String accessCode) {
+        return accessCodeMng.get(accessCode);
     }
 
-    public boolean checkAccessCode(String access_code) {
+    public boolean checkAccessCode(String accessCode) {
 
         boolean ret;
 
-        ret = AccessCodeMng.containsKey(access_code);
+        ret = accessCodeMng.containsKey(accessCode);
 
         if (ret) {
-            SDKUserBean userId = getAccessCode(access_code);
+            SDKUserBean userId = getAccessCode(accessCode);
             if (null == userId) {
-                eraseAccessToken(access_code);
+                eraseAccessToken(accessCode);
                 return false;
             } else {
                 return true;
@@ -87,70 +87,68 @@ public class UserManager {
         return ret;
     }
 
-    public void eraseAccessCode(String access_code) {
-        AccessCodeMng.get(access_code).cancelTask();
-        AccessCodeMng.remove(access_code);
+    public void eraseAccessCode(String accessCode) {
+        accessCodeMng.get(accessCode).cancelTask();
+        accessCodeMng.remove(accessCode);
     }
 
-    public void removeAccessCode(String access_code) {
-        AccessCodeMng.remove(access_code);
+    public void removeAccessCode(String accessCode) {
+        accessCodeMng.remove(accessCode);
     }
 
     /**
      * Access_Token操作
      */
-    public String createAccessToken(String access_code, SDKStructure.USER_INFO_S userInfo) {
+    public String createAccessToken(String accessCode, SDKStructure.USER_INFO_S userInfo) {
 
-        String access_token = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
+        String accessToken = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
 
-        while (checkAccessToken(access_token)) {
-            access_token = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
+        while (checkAccessToken(accessToken)) {
+            accessToken = StringUtils.getRandomString(RANDOM_STRING_LENGTH);
         }
 
-        SDKUserBean user = getAccessCode(access_code);
-        user.updateUser(access_token, userInfo);
-        AccessTokenMng.put(access_token, user);
-        eraseAccessCode(access_code);
+        SDKUserBean user = getAccessCode(accessCode);
+        user.updateUser(accessToken, userInfo);
+        accessTokenMng.put(accessToken, user);
+        eraseAccessCode(accessCode);
 
-        return access_token;
+        return accessToken;
 
     }
 
-    public SDKUserBean getUserInfo(String access_token) {
-        return AccessTokenMng.get(access_token);
+    public SDKUserBean getUserInfo(String accessToken) {
+        return accessTokenMng.get(accessToken);
     }
 
-    public void updateUserInfo(String access_token) {
-        SDKUserBean UserInfo = AccessTokenMng.get(access_token);
-        UserInfo.updateTime();
-        UserInfo.updateTimer();
+    public void updateUserInfo(String accessToken) {
+        SDKUserBean userBean = accessTokenMng.get(accessToken);
+        userBean.updateTime();
+        userBean.updateTimer();
     }
 
-    public boolean checkAccessToken(String access_token) {
+    public boolean checkAccessToken(String accessToken) {
 
-        boolean ret;
-
-        ret = AccessTokenMng.containsKey(access_token);
+        boolean ret = accessTokenMng.containsKey(accessToken);
 
         if (ret) {
-            SDKUserBean userId = getUserInfo(access_token);
+            SDKUserBean userId = getUserInfo(accessToken);
             if (null == userId) {
-                eraseAccessToken(access_token);
+                eraseAccessToken(accessToken);
                 return false;
             } else {
                 return true;
             }
         }
 
-        return ret;
+        return false;
     }
 
-    public void eraseAccessToken(String access_token) {
-        AccessTokenMng.get(access_token).cancelTask();
-        AccessTokenMng.remove(access_token);
+    public void eraseAccessToken(String accessToken) {
+        accessTokenMng.get(accessToken).cancelTask();
+        accessTokenMng.remove(accessToken);
     }
 
-    public void removeAccessToken(String access_token) {
-        AccessTokenMng.remove(access_token);
+    public void removeAccessToken(String accessToken) {
+        accessTokenMng.remove(accessToken);
     }
 }

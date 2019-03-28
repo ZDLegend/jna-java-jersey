@@ -23,9 +23,9 @@ public class SDKLogoutResource {
      * 用户退出系统
      */
     @POST
-    public JSONObject UserLogout(@Context HttpHeaders headers) {
-        String access_token = headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0);
-        UserManager.getInstance().eraseAccessToken(access_token);
+    public JSONObject userLogout(@Context HttpHeaders headers) {
+        String accessToken = headers.getRequestHeader(HttpHeaders.AUTHORIZATION).get(0);
+        UserManager.getInstance().eraseAccessToken(accessToken);
         return ResponseInfoMng.correctRsp();
     }
 }

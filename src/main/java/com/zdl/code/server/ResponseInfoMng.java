@@ -12,6 +12,9 @@ public class ResponseInfoMng {
 
     private static JSONObject errCode;
 
+    private static final String ERROR_CODE = "errcode";
+    private static final String ERROR_MSG = "errmsg";
+
     static {
         String url = ResponseInfoMng.class.getResource("../../error.json").getPath();
         String path = StringUtils.spaceString(url);
@@ -46,8 +49,8 @@ public class ResponseInfoMng {
         String errmsg = getErrmsg(ret);
         errmsg = msg + ":" + errmsg;
 
-        resp.put("errcode", ret);
-        resp.put("errmsg", errmsg);
+        resp.put(ERROR_CODE, ret);
+        resp.put(ERROR_MSG, errmsg);
         return resp;
     }
 
@@ -56,8 +59,8 @@ public class ResponseInfoMng {
      */
     public static JSONObject correctRsp() {
         JSONObject resp = getRsp();
-        resp.put("errcode", 0);
-        resp.put("errmsg", "OK");
+        resp.put(ERROR_CODE, 0);
+        resp.put(ERROR_MSG, "OK");
         return resp;
     }
 
@@ -66,15 +69,14 @@ public class ResponseInfoMng {
      */
     public static JSONObject correctRsp(Object msg) {
         JSONObject resp = getRsp();
-        resp.put("errcode", 0);
-        resp.put("errmsg", "OK");
+        resp.put(ERROR_CODE, 0);
+        resp.put(ERROR_MSG, "OK");
         resp.put("result", msg);
         return resp;
     }
 
-    public static JSONObject getRsp() {
-        JSONObject obj = new JSONObject();
-        return obj;
+    private static JSONObject getRsp() {
+        return new JSONObject();
     }
 
 }
