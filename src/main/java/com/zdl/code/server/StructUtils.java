@@ -54,8 +54,7 @@ public final class StructUtils {
                 if (varName.equals(entry.getKey())) {
                     try {
                         Object object = field.get(structure);
-                        String typeName = object.getClass().getTypeName();
-                        if ("byte[]".equals(typeName) || object instanceof byte[]) {
+                        if (object instanceof byte[]) {
                             StringUtils.setSdkBytes((byte[]) object, entry.getValue().toString());
                         } else if (object.getClass().getName().contains("Structure")) {
                             if (object.getClass().isArray()) {
@@ -67,9 +66,11 @@ public final class StructUtils {
                             } else {
                                 json2Struct((JSONObject) entry.getValue(), (Structure) object);
                             }
+                        } else if (object.getClass() == int.class && entry.getValue() != null) {
+                            field.set(structure, ClassUtils.cast(entry.getValue(), int.class));
                         } else {
                             if (entry.getValue() instanceof String) {
-                                String msg = "Type of " + varName + " should be " + typeName + " in json";
+                                String msg = "Type of " + varName + " should be " + object.getClass().getTypeName() + " in json";
                                 throw new StructException(msg);
                             }
                             field.set(structure, entry.getValue());
@@ -122,7 +123,6 @@ public final class StructUtils {
                 Object obj = field.get(structure);
                 if ("byte[]".equals(obj.getClass().getTypeName())) {
                     String str = StringUtils.bytesToString((byte[]) obj);
-
                     jsonObject.put(varName, str);
                 } else if (obj.getClass().getName().contains("Structure")) {
                     if (obj.getClass().isArray()) {
