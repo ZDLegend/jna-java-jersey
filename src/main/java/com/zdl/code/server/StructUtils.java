@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by ZDLegend on 2016/8/16.
@@ -30,96 +32,50 @@ public final class StructUtils {
     /**
      * Json转结构体
      */
-    public static Structure json2Struct(JSONObject jsonObject, Structure structure) throws StructException {
-
-        //获取结构体字段
+    public static void json2Struct(JSONObject jsonObject, Structure structure) throws StructException {
         Field[] fields = structure.getClass().getDeclaredFields();
-        String strName = structure.getClass().getName();
-
-        int e = 0;
-        //遍历赋值
-        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-
-            int find = 0;
-
-            for (Field field : fields) {
-
-                // 对于每个属性，获取属性名
-                String varName = field.getName();
-                //过滤掉结构体属性名中的前缀
-                varName = StringUtils.removLowerHaed(varName);
-
+        Map<String, Field> fieldMap = Stream.of(fields).collect(Collectors.toMap(Field::getName, f -> f));
+        jsonObject.forEach((k, v) -> {
+            if (fieldMap.containsKey(k)) {
+                Field field = fieldMap.get(k);
                 field.setAccessible(true);
-
-                if (varName.equals(entry.getKey())) {
-                    try {
-                        Object object = field.get(structure);
-                        if (object instanceof byte[]) {
-                            StringUtils.setSdkBytes((byte[]) object, entry.getValue().toString());
-                        } else if (object.getClass().getName().contains("Structure")) {
-                            if (object.getClass().isArray()) {
-                                JSONArray array = (JSONArray) entry.getValue();
-                                int length = array.size();
-                                for (int i = 0; i < length; i++) {
-                                    json2Struct((JSONObject) array.get(i), (Structure) Array.get(object, i));
-                                }
-                            } else {
-                                json2Struct((JSONObject) entry.getValue(), (Structure) object);
+                try {
+                    Object object = field.get(structure);
+                    if (object instanceof byte[]) {
+                        StringUtils.setSdkBytes((byte[]) object, v.toString());
+                    } else if (object.getClass().getName().contains("Structure")) {
+                        if (object.getClass().isArray()) {
+                            JSONArray array = jsonObject.getJSONArray(k);
+                            int length = array.size();
+                            for (int i = 0; i < length; i++) {
+                                json2Struct(array.getJSONObject(i), (Structure) Array.get(object, i));
                             }
-                        } else if (object.getClass() == int.class && entry.getValue() != null) {
-                            field.set(structure, ClassUtils.cast(entry.getValue(), int.class));
                         } else {
-                            if (entry.getValue() instanceof String) {
-                                String msg = "Type of " + varName + " should be " + object.getClass().getTypeName() + " in json";
-                                throw new StructException(msg);
-                            }
-                            field.set(structure, entry.getValue());
+                            json2Struct(jsonObject.getJSONObject(k), (Structure) object);
                         }
-                    } catch (IllegalAccessException ex) {
-                        throw new StructException(ex.getMessage());
+                    } else {
+                        field.set(structure, ClassUtils.cast(v, object.getClass()));
                     }
-
-                    find = 1;
-                    e++;
+                } catch (IllegalAccessException ex) {
+                    throw new StructException(ex.getMessage());
                 }
-
+            } else {
+                logger.debug("{}该结构体类型中没有Json中的{}字段", structure.getClass().getName(), k);
             }
-
-            if (1 != find) {
-                logger.debug("{}该结构体类型中没有Json中的{}变量", strName, entry.getKey());
-            }
-
-        }
-
-        if (0 == e) {
-            logger.error("{}结构体类型与Json不匹配", strName);
-        }
-
-        return structure;
-
+        });
     }
 
     /**
      * 结构体转Json
      */
     public static JSONObject struct2Json(Structure structure) {
-
         JSONObject jsonObject = new JSONObject();
-
-        // 获取对象obj的所有属性域
         Field[] fields = structure.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            // 对于每个属性，获取属性名
+        Stream.of(fields).forEach(field -> {
             String varName = field.getName();
-            //过滤掉属性名中的前缀
             varName = StringUtils.removLowerHaed(varName);
-
             try {
-                //打开修改权限
                 field.setAccessible(true);
-
-                //从obj中获取field变量
                 Object obj = field.get(structure);
                 if ("byte[]".equals(obj.getClass().getTypeName())) {
                     String str = StringUtils.bytesToString((byte[]) obj);
@@ -138,84 +94,39 @@ public final class StructUtils {
                 } else {
                     jsonObject.put(varName, obj);
                 }
-
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
-        }
-
+        });
         return jsonObject;
     }
 
     public JSONObject struct2Json() {
-
-
-        JSONObject jsonObject = new JSONObject();
-
-        // 获取对象obj的所有属性域
-        Field[] fields = stru.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            // 对于每个属性，获取属性名
-            String varName = field.getName();
-            //过滤掉属性名中的前缀
-            varName = StringUtils.removLowerHaed(varName);
-
-            try {
-                field.setAccessible(true);
-
-                //从obj中获取field变量
-                Object obj = field.get(stru);
-                if ("byte[]".equals(obj.getClass().getTypeName())) {
-                    String str = StringUtils.bytesToString((byte[]) obj);
-                    jsonObject.put(varName, str);
-                } else {
-                    jsonObject.put(varName, obj);
-                }
-
-            } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
-            }
-        }
-
-        return jsonObject;
+        return struct2Json(stru);
     }
-
 
     /**
      * 把源结构体和目的结构体相同的属性的值付给目的结构体
      * 不考虑结构体内含结构体状况
      */
-    public static StructUtils filterStruct(Structure dst, Structure src) {
-
-        /* 获取对象obj的所有属性域 */
+    public static StructUtils copyStruct(Structure dst, Structure src) {
         Field[] fields = dst.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-
-            /* 对于每个属性，获取属性名 */
-            String varName = field.getName();
-
+        Stream.of(fields).forEach(field -> {
             try {
                 field.setAccessible(true);
-
-                /* 获取源field的变量 */
-                Object objSrc = src.getClass().getDeclaredField(varName).get(src);
-
-                /* 获取目的field的变量 */
+                // 获取源field的变量
+                Object objSrc = src.getClass().getDeclaredField(field.getName()).get(src);
+                // 获取目的field的变量
                 Object objDst = field.get(dst);
-
                 if (objDst.getClass().isAssignableFrom(byte[].class)) {
                     StringUtils.arrayCopy((byte[]) objDst, (byte[]) objSrc);
                 } else {
                     field.set(dst, objSrc);
                 }
-
             } catch (Exception ex) {
                 logger.error(ex.getMessage(), ex);
             }
-        }
-
+        });
         return new StructUtils(dst);
     }
 }

@@ -54,7 +54,7 @@ public class CallBackProcPF implements SDKFunction.CALL_BACK_ALARM_PROC_PF {
         if (!openAlarm) return;
 
         String strData = StructUtils
-                .filterStruct(new ComStructure.EVENT_RECORD_FILT(), pstEventRecord)
+                .copyStruct(new ComStructure.EVENT_RECORD_FILT(), pstEventRecord)
                 .struct2Json()
                 .toString();
 
